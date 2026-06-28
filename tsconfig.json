@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "lib": ["ES2020"],
+    "strict": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "outDir": "./dist",
+    "rootDir": ".",
+    "types": ["node", "@wdio/globals/types", "@wdio/mocha-framework"],
+    "skipLibCheck": true,
+    "paths": {
+      "@screens/*": ["./src/screens/*"],
+      "@tests/*": ["./src/tests/*"]
+    }
+  },
+  "include": ["src/**/*", "config/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Logs
+*.log
+
+# WebdriverIO
+.wdio-*
+
+# Appium temp
+/tmp/appium.log
+
+# Test artifacts (generated at runtime)
+allure-results/
+allure-report/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Claude Code session data
+.claude/

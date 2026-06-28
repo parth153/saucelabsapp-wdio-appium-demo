@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "wdio": {
+      "type": "stdio",
+      "command": "/Users/parthparikh/Desktop/experiments/saucelabsappdemo/node_modules/.bin/wdio-mcp",
+      "args": []
+    }
+  }
+}
