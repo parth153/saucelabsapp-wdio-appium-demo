@@ -77,8 +77,7 @@ jobs:
             timeout 60 bash -c 'until curl -sf http://127.0.0.1:4723/status > /dev/null; do sleep 2; done'
             echo "Appium is ready."
 
-            SPEC_FLAGS=$(echo "${{ matrix.shard.specs }}" | sed 's/,/ --spec /g')
-            npx wdio run config/wdio.android.conf.ts --spec $SPEC_FLAGS
+            SPEC_FILES="${{ matrix.shard.specs }}" npx wdio run config/wdio.android.conf.ts
             TEST_EXIT=$?
 
             kill $APPIUM_PID 2>/dev/null || true

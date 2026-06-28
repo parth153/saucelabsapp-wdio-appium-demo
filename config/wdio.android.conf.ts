@@ -23,7 +23,9 @@ export const config: WebdriverIO.Config = {
   runner: 'local',
   port: 4723,
 
-  specs: [path.resolve(__dirname, '../src/tests/android/**/*.spec.ts')],
+  specs: process.env.SPEC_FILES
+    ? process.env.SPEC_FILES.split(',').map(f => path.resolve(f))
+    : [path.resolve(__dirname, '../src/tests/android/**/*.spec.ts')],
   exclude: [],
 
   maxInstances: 1,
