@@ -37,9 +37,9 @@ describe('TS-03: Product Detail', () => {
   it('TC-023: detail screen shows correct name, description, and price for Sauce Labs Backpack', async () => {
     await openDetailByName('Sauce Labs Backpack');
     const soft = new SoftAssert();
-    soft.check(() => expect(await ProductDetailScreen.getName()).toBe('Sauce Labs Backpack'), 'name');
-    soft.check(() => expect(await ProductDetailScreen.getDescription()).toContain('carry.allTheThings()'), 'description');
-    soft.check(() => expect(await ProductDetailScreen.getPrice()).toBe('$29.99'), 'price');
+    await soft.check(async () => expect(await ProductDetailScreen.getName()).toBe('Sauce Labs Backpack'), 'name');
+    await soft.check(async () => expect(await ProductDetailScreen.getDescription()).toContain('carry.allTheThings()'), 'description');
+    await soft.check(async () => expect(await ProductDetailScreen.getPrice()).toBe('$29.99'), 'price');
     soft.assertAll();
   });
 

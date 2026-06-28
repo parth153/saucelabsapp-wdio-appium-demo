@@ -11,9 +11,9 @@
 export class SoftAssert {
   private readonly failures: string[] = [];
 
-  check(fn: () => void, label?: string): void {
+  async check(fn: () => void | Promise<void>, label?: string): Promise<void> {
     try {
-      fn();
+      await fn();
     } catch (e: any) {
       const prefix = label ? `[${label}] ` : '';
       this.failures.push(prefix + (e?.message ?? String(e)));
