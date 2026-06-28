@@ -55,6 +55,11 @@ class ProductDetailScreen {
   }
 
   async getPrice(): Promise<string> {
+    // Price sits below the fold — scroll to it before reading
+    await $(
+      `android=new UiScrollable(new UiSelector().scrollable(true))` +
+      `.scrollIntoView(new UiSelector().description("test-Price"))`
+    ).waitForExist({ timeout: 10_000 });
     let text = await this.productPrice.getText();
     if (!text) {
       const tv = await this.productPrice.$('android.widget.TextView');

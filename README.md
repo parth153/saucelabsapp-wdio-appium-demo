@@ -25,7 +25,7 @@ End-to-end UI automation tests for the **Swag Labs** demo mobile app, covering b
 | Android Driver | appium-uiautomator2-driver 8.x |
 | iOS Driver | appium-xcuitest-driver 11.x |
 | Reporting | Allure Report 2.x |
-| Node.js | 18+ |
+| Node.js | 22+ |
 
 ---
 
@@ -53,7 +53,8 @@ End-to-end UI automation tests for the **Swag Labs** demo mobile app, covering b
 │   │   └── ios/                         # iOS spec files (5 suites, 28 tests)
 │   └── helpers/
 │       ├── permissions.ts               # Android runtime permission handler
-│       └── platform.ts                  # Cross-platform selector helpers
+│       ├── platform.ts                  # Cross-platform selector helpers
+│       └── softAssert.ts                # Soft assertion helper (collect all failures before throwing)
 ├── specs/
 │   ├── android/                         # Test strategy, plan, and test cases (Android)
 │   └── ios/                             # Test strategy, plan, and test cases (iOS)
@@ -196,18 +197,41 @@ npm run report            # generate + open in one command
 
 ## GitHub Actions — CI/CD
 
-Android tests run automatically on every push and pull request to `main` via GitHub Actions. The workflow:
+Android tests run automatically on every push and pull request to `main` via GitHub Actions. The workflow runs **3 shards in parallel** to cut runtime from ~38 min to ~12–15 min:
 
-1. Starts an Android 13 (API 33) emulator on the Ubuntu runner
+| Shard | Spec Files |
+|---|---|
+| `auth-products` | `login.spec.ts`, `products.spec.ts` |
+| `cart-checkout` | `cart.spec.ts`, `checkout.spec.ts` |
+| `detail-menu-extended` | `productDetail.spec.ts`, `sideMenu.spec.ts`, `extendedFeatures.spec.ts` |
+
+Each shard:
+1. Spins up its own Android 13 (API 33) emulator on Ubuntu
 2. Installs Node dependencies
 3. Starts Appium
-4. Runs the Android test suite
-5. Generates the Allure report
-6. Publishes the report to **GitHub Pages**
+4. Runs its subset of tests
 
-The latest Allure report is always available at the project's GitHub Pages URL after each CI run.
+After all shards complete, a dedicated `report` job merges the Allure results and publishes the combined report to **GitHub Pages**.
 
 > iOS tests are **not** run in CI — iOS simulators require macOS runners and are outside the current CI scope. iOS tests are executed locally on macOS.
+
+---
+
+## Soft Assertions
+
+The `SoftAssert` helper ([src/helpers/softAssert.ts](src/helpers/softAssert.ts)) collects multiple assertion failures within a single test before throwing, so you see all failures at once rather than stopping at the first one.
+
+```typescript
+import { SoftAssert } from '../../helpers/softAssert';
+
+it('TC-023: detail screen shows correct content', async () => {
+  const soft = new SoftAssert();
+  soft.check(() => expect(name).toBe('Sauce Labs Backpack'), 'name');
+  soft.check(() => expect(desc).toContain('carry.allTheThings()'), 'description');
+  soft.check(() => expect(price).toBe('$29.99'), 'price');
+  soft.assertAll(); // throws once with all failures listed
+});
+```
 
 ---
 

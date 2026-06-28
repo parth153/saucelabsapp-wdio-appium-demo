@@ -49,6 +49,9 @@ describe('TS-07: Extended Feature Screens', () => {
   });
 
   it('TC-060: GEO LOCATION shows latitude and longitude coordinates; back returns to Products', async () => {
+    // Inject mock GPS so the emulator resolves coordinates (no real hardware available in CI)
+    await driver.setGeoLocation({ latitude: 37.7749, longitude: -122.4194, altitude: 10 });
+
     await SideMenuDrawer.open();
     await SideMenuDrawer.geoLocationOption.click();
 
@@ -56,10 +59,17 @@ describe('TS-07: Extended Feature Screens', () => {
     await expect(GeoLocationScreen.latitudeLabel).toBeDisplayed();
     await expect(GeoLocationScreen.longitudeLabel).toBeDisplayed();
 
+    // Wait up to 15s for the app to resolve the injected coordinates
+    await driver.waitUntil(
+      async () => {
+        const lat = await GeoLocationScreen.getLatitude();
+        return lat.length > 0 && lat !== 'Determining position...';
+      },
+      { timeout: 15_000, timeoutMsg: 'Geo coordinates never resolved after setGeoLocation' }
+    );
+
     const lat = await GeoLocationScreen.getLatitude();
     const lon = await GeoLocationScreen.getLongitude();
-    expect(lat.length).toBeGreaterThan(0);
-    expect(lon.length).toBeGreaterThan(0);
     expect(parseFloat(lat)).not.toBeNaN();
     expect(parseFloat(lon)).not.toBeNaN();
 

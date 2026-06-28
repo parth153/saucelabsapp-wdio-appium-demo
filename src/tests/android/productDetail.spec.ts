@@ -1,6 +1,7 @@
 import LoginScreen from '../../screens/android/LoginScreen';
 import ProductsScreen from '../../screens/android/ProductsScreen';
 import ProductDetailScreen from '../../screens/android/ProductDetailScreen';
+import { SoftAssert } from '../../helpers/softAssert';
 
 describe('TS-03: Product Detail', () => {
   beforeEach(async () => {
@@ -35,9 +36,11 @@ describe('TS-03: Product Detail', () => {
 
   it('TC-023: detail screen shows correct name, description, and price for Sauce Labs Backpack', async () => {
     await openDetailByName('Sauce Labs Backpack');
-    expect(await ProductDetailScreen.getName()).toBe('Sauce Labs Backpack');
-    expect(await ProductDetailScreen.getDescription()).toContain('carry.allTheThings()');
-    expect(await ProductDetailScreen.getPrice()).toBe('$29.99');
+    const soft = new SoftAssert();
+    soft.check(() => expect(await ProductDetailScreen.getName()).toBe('Sauce Labs Backpack'), 'name');
+    soft.check(() => expect(await ProductDetailScreen.getDescription()).toContain('carry.allTheThings()'), 'description');
+    soft.check(() => expect(await ProductDetailScreen.getPrice()).toBe('$29.99'), 'price');
+    soft.assertAll();
   });
 
   it('TC-024: add to cart from detail screen changes button to REMOVE and shows badge 1', async () => {
