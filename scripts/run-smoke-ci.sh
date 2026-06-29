@@ -31,8 +31,5 @@ ANDROID_DEVICE_NAME="${ANDROID_DEVICE_NAME:-emulator-5554}" \
 
 # Clean up: Appium then emulator (so emulator-runner finds it already dead)
 kill "$APPIUM_PID" 2>/dev/null || true
-adb emu kill 2>/dev/null || true
-sleep 3
-pkill -f emulator 2>/dev/null || true
 
 exit $TEST_EXIT
