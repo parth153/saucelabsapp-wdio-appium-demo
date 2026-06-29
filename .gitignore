@@ -26,3 +26,5 @@ allure-report/
 
 # Claude Code session data
 .claude/
+.wdio-rerun/
+rerun.sh

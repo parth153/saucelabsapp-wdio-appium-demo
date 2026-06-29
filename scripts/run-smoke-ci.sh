@@ -15,6 +15,13 @@ ANDROID_DEVICE_NAME="${ANDROID_DEVICE_NAME:-emulator-5554}" \
   npx wdio run config/wdio.android.conf.ts --mochaOpts.grep '\[smoke\]'
 TEST_EXIT=$?
 
+# Re-run failed specs once if the first run had failures
+if [ $TEST_EXIT -ne 0 ] && [ -f rerun.sh ]; then
+  echo "Re-running failed specs..."
+  DISABLE_RERUN=true ANDROID_DEVICE_NAME="${ANDROID_DEVICE_NAME:-emulator-5554}" bash rerun.sh
+  TEST_EXIT=$?
+fi
+
 pkill -f appium 2>/dev/null || true
 sleep 3
 

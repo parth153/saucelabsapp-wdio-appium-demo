@@ -28,6 +28,7 @@
     "concurrently": "^10.0.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3",
-    "wait-on": "^9.0.10"
+    "wait-on": "^9.0.10",
+    "wdio-rerun-service": "^3.0.1"
   }
 }

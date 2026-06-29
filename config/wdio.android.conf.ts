@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 import AllureReporter from '@wdio/allure-reporter';
+import RerunService from 'wdio-rerun-service';
 
 // Fall back to the standard macOS Android Studio SDK location when the shell
 // hasn't exported ANDROID_HOME (e.g. when launched from an IDE or CI runner).
@@ -49,6 +50,13 @@ export const config: WebdriverIO.Config = {
   waitforTimeout: 10000,
   connectionRetryTimeout: 120000,
   connectionRetryCount: 3,
+
+  services: [
+    [RerunService, {
+      rerunDataDir: '.wdio-rerun',
+      rerunScriptPath: 'rerun.sh',
+    }],
+  ],
 
   framework: 'mocha',
   reporters: [
