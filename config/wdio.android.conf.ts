@@ -55,6 +55,7 @@ export const config: WebdriverIO.Config = {
     [RerunService, {
       rerunDataDir: '.wdio-rerun',
       rerunScriptPath: 'rerun.sh',
+      customParameters: 'config/wdio.android.conf.ts',
     }],
   ],
 
