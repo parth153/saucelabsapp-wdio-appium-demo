@@ -24,10 +24,10 @@ until curl -sf http://127.0.0.1:4723/status > /dev/null; do
 done
 echo "Appium is ready."
 
-# Run smoke suite
+# Run smoke suite — capture exit code without triggering set -e
+TEST_EXIT=0
 ANDROID_DEVICE_NAME="${ANDROID_DEVICE_NAME:-emulator-5554}" \
-  npx wdio run config/wdio.android.conf.ts --mochaOpts.grep '\[smoke\]'
-TEST_EXIT=$?
+  npx wdio run config/wdio.android.conf.ts --mochaOpts.grep '\[smoke\]' || TEST_EXIT=$?
 
 # Clean up: Appium then emulator (so emulator-runner finds it already dead)
 kill "$APPIUM_PID" 2>/dev/null || true
