@@ -70,7 +70,7 @@ jobs:
           profile: pixel_5
           avd-name: test_avd
           force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -port 5554
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot-save -port 5554
           disable-animations: true
           script: |
             echo "Emulator serial: $(adb devices)"
