@@ -81,22 +81,9 @@ jobs:
           profile: pixel_5
           avd-name: test_avd
           force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -port 5554
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot-save -port 5554
           disable-animations: true
-          script: |
-            echo "Emulator serial: $(adb devices)"
-
-            npx appium --port 4723 --log appium.log &
-            APPIUM_PID=$!
-
-            timeout 60 bash -c 'until curl -sf http://127.0.0.1:4723/status > /dev/null; do sleep 2; done'
-            echo "Appium is ready."
-
-            SPEC_FILES="${{ matrix.shard.specs }}" npx wdio run config/wdio.android.conf.ts
-            TEST_EXIT=$?
-
-            kill $APPIUM_PID 2>/dev/null || true
-            exit $TEST_EXIT
+          script: SPEC_FILES="${{ matrix.shard.specs }}" bash scripts/run-shard-ci.sh
 
       - name: Upload Allure results for shard
         if: always()
