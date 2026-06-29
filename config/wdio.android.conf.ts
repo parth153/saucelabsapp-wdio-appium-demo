@@ -40,7 +40,7 @@ export const config: WebdriverIO.Config = {
       'appium:appPackage': 'com.swaglabsmobileapp',
       'appium:appActivity': 'com.swaglabsmobileapp.MainActivity',
       'appium:noReset': false,
-      'appium:newCommandTimeout': 240,
+      'appium:newCommandTimeout': 60,
     },
   ],
 
@@ -93,22 +93,20 @@ export const config: WebdriverIO.Config = {
   },
 
   afterTest: async (_test, _context, { passed, retries }) => {
-    let video: string;
+    if (passed) return;
+
+    let video = '';
     try {
       video = await (browser as any).stopRecordingScreen() as string;
-    } catch {
-      video = '';
-    }
+    } catch { }
 
-    if (!passed) {
-      await captureScreenshot(`Screenshot (Attempt ${retries.attempts + 1})`);
-      if (video) {
-        AllureReporter.addAttachment(
-          `Video (Attempt ${retries.attempts + 1})`,
-          Buffer.from(video, 'base64'),
-          'video/mp4',
-        );
-      }
+    await captureScreenshot(`Screenshot (Attempt ${retries.attempts + 1})`);
+    if (video) {
+      AllureReporter.addAttachment(
+        `Video (Attempt ${retries.attempts + 1})`,
+        Buffer.from(video, 'base64'),
+        'video/mp4',
+      );
     }
   },
 };
