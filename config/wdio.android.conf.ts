@@ -41,6 +41,7 @@ export const config: WebdriverIO.Config = {
       'appium:appPackage': 'com.swaglabsmobileapp',
       'appium:appActivity': 'com.swaglabsmobileapp.MainActivity',
       'appium:noReset': false,
+      'appium:autoGrantPermissions': true,
       'appium:newCommandTimeout': 60,
     },
   ],
