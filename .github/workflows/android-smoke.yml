@@ -5,6 +5,8 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 jobs:
   smoke:
@@ -61,6 +63,14 @@ jobs:
             kill $APPIUM_PID 2>/dev/null || true
             exit $TEST_EXIT
 
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-smoke
+          path: allure-results/
+          retention-days: 1
+
       - name: Upload Appium logs on failure
         if: failure()
         uses: actions/upload-artifact@v4
@@ -68,3 +78,69 @@ jobs:
           name: appium-logs-smoke
           path: appium.log
           retention-days: 7
+
+  report:
+    needs: smoke
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Download Allure results
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-results-smoke
+          path: allure-results/
+
+      - name: Generate Allure report
+        run: npx allure generate allure-results --clean -o allure-report
+
+      - name: Upload Allure report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report-smoke
+          path: allure-report/
+          retention-days: 30
+
+  deploy-pages:
+    needs: report
+    if: always()
+    runs-on: ubuntu-latest
+
+    concurrency:
+      group: pages-${{ github.ref }}
+      cancel-in-progress: true
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
+    steps:
+      - name: Download Allure report artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-report-smoke
+          path: allure-report/
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload report to Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: allure-report/
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
