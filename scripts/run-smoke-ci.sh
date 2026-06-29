@@ -30,6 +30,7 @@ ANDROID_DEVICE_NAME="${ANDROID_DEVICE_NAME:-emulator-5554}" \
   npx wdio run config/wdio.android.conf.ts --mochaOpts.grep '\[smoke\]' || TEST_EXIT=$?
 
 # Clean up: Appium then emulator (so emulator-runner finds it already dead)
-kill "$APPIUM_PID" 2>/dev/null || true
+pkill -f appium 2>/dev/null || true
+sleep 3
 
 exit $TEST_EXIT
