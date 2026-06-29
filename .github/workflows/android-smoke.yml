@@ -90,6 +90,9 @@ jobs:
             TEST_EXIT=$?
 
             pkill -f appium 2>/dev/null || true
+            adb emu kill 2>/dev/null || true
+            sleep 3
+            pkill -f emulator 2>/dev/null || true
             exit $TEST_EXIT
 
       - name: Upload Allure results
