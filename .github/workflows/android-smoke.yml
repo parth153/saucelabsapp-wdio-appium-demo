@@ -73,18 +73,23 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot-save -port 5554
           disable-animations: true
           script: |
-            echo "Emulator serial: $(adb devices)"
+            echo "Emulator ready: $(adb devices)"
+            adb wait-for-device shell 'while [ "$(getprop sys.boot_completed)" != "1" ]; do sleep 1; done'
 
             npx appium --port 4723 --log appium.log &
             APPIUM_PID=$!
 
-            timeout 60 bash -c 'until curl -sf http://127.0.0.1:4723/status > /dev/null; do sleep 2; done'
+            if ! timeout 60 bash -c 'until curl -sf http://127.0.0.1:4723/status > /dev/null; do sleep 2; done'; then
+              echo "ERROR: Appium did not become ready within 60 seconds"
+              pkill -f appium 2>/dev/null || true
+              exit 1
+            fi
             echo "Appium is ready."
 
-            npx wdio run config/wdio.android.conf.ts --mochaOpts.grep '\[smoke\]'
+            npx wdio run config/wdio.android.conf.ts --mochaOpts.grep "[smoke]"
             TEST_EXIT=$?
 
-            kill $APPIUM_PID 2>/dev/null || true
+            pkill -f appium 2>/dev/null || true
             exit $TEST_EXIT
 
       - name: Upload Allure results
