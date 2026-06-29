@@ -64,7 +64,6 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -port 5554
           disable-animations: true
           script: |
-            adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 2; done'
             echo "Emulator serial: $(adb devices)"
 
             npx appium --port 4723 --log appium.log &
