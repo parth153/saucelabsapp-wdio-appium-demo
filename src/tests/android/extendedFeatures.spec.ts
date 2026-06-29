@@ -9,13 +9,14 @@ import { pressBack } from '../../helpers/platform';
 
 describe('TS-07: Extended Feature Screens', () => {
   beforeEach(async () => {
-    await driver.reloadSession();
+    await driver.terminateApp('com.swaglabsmobileapp');
+    await driver.activateApp('com.swaglabsmobileapp');
     await LoginScreen.waitForDisplayed();
     await LoginScreen.login('standard_user', 'secret_sauce');
     await ProductsScreen.isDisplayed(40_000);
   });
 
-  it('TC-058: WEBVIEW screen loads URL entry form without crash; back returns to Products', async () => {
+  it('[smoke] TC-058: WEBVIEW screen loads URL entry form without crash; back returns to Products', async () => {
     await SideMenuDrawer.open();
     await SideMenuDrawer.webviewOption.click();
 

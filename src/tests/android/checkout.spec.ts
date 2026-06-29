@@ -25,7 +25,8 @@ describe('TS-05: Checkout Flow', () => {
   }
 
   beforeEach(async () => {
-    await driver.reloadSession();
+    await driver.terminateApp('com.swaglabsmobileapp');
+    await driver.activateApp('com.swaglabsmobileapp');
     await LoginScreen.waitForDisplayed();
     await LoginScreen.login('standard_user', 'secret_sauce');
     await ProductsScreen.isDisplayed(40_000);
@@ -36,7 +37,7 @@ describe('TS-05: Checkout Flow', () => {
     await CheckoutStep1Screen.isDisplayed();
   });
 
-  it('TC-034: full checkout happy path reaches CHECKOUT: COMPLETE!', async () => {
+  it('[smoke] TC-034: full checkout happy path reaches CHECKOUT: COMPLETE!', async () => {
     await completeStep1();
     await CheckoutStep2Screen.tapFinish();
     expect(await CheckoutCompleteScreen.isDisplayed()).toBe(true);

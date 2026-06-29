@@ -3,7 +3,8 @@ import ProductsScreen from '../../screens/android/ProductsScreen';
 
 describe('TS-02: Products Catalog', () => {
   beforeEach(async () => {
-    await driver.reloadSession();
+    await driver.terminateApp('com.swaglabsmobileapp');
+    await driver.activateApp('com.swaglabsmobileapp');
     await LoginScreen.waitForDisplayed();
     await LoginScreen.login('standard_user', 'secret_sauce');
     await ProductsScreen.isDisplayed(40_000);
@@ -90,7 +91,7 @@ describe('TS-02: Products Catalog', () => {
     expect(namesAfter).toEqual(namesBefore);
   });
 
-  it('TC-016: adding a product changes button to REMOVE and shows cart badge 1', async () => {
+  it('[smoke] TC-016: adding a product changes button to REMOVE and shows cart badge 1', async () => {
     await ProductsScreen.addProductToCart(0);
     const removeButtons = await $$('~test-REMOVE');
     expect(removeButtons.length).toBe(1);

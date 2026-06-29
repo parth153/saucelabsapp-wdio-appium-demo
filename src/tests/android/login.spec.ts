@@ -4,11 +4,12 @@ import SideMenuDrawer from '../../screens/android/SideMenuDrawer';
 
 describe('TS-01: Authentication', () => {
   beforeEach(async () => {
-    await driver.reloadSession();
+    await driver.terminateApp('com.swaglabsmobileapp');
+    await driver.activateApp('com.swaglabsmobileapp');
     await LoginScreen.waitForDisplayed();
   });
 
-  it('TC-001: logs in with valid credentials (standard_user)', async () => {
+  it('[smoke] TC-001: logs in with valid credentials (standard_user)', async () => {
     await LoginScreen.login('standard_user', 'secret_sauce');
     expect(await ProductsScreen.isDisplayed()).toBe(true);
   });

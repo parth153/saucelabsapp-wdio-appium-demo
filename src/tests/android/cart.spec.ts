@@ -31,13 +31,14 @@ describe('TS-04: Shopping Cart', () => {
   }
 
   beforeEach(async () => {
-    await driver.reloadSession();
+    await driver.terminateApp('com.swaglabsmobileapp');
+    await driver.activateApp('com.swaglabsmobileapp');
     await LoginScreen.waitForDisplayed();
     await LoginScreen.login('standard_user', 'secret_sauce');
     await ProductsScreen.isDisplayed(40_000);
   });
 
-  it('TC-027: cart shows all added items with correct names, prices, qty, and remove buttons', async () => {
+  it('[smoke] TC-027: cart shows all added items with correct names, prices, qty, and remove buttons', async () => {
     await addToCartByName('Sauce Labs Backpack');
     await addToCartByName('Sauce Labs Bike Light');
     await ProductsScreen.tapCart();
@@ -125,7 +126,8 @@ describe('TS-04: Shopping Cart', () => {
   });
 
   it('TC-033: error user — cart behaviour documented; app must not crash', async () => {
-    await driver.reloadSession();
+    await driver.terminateApp('com.swaglabsmobileapp');
+    await driver.activateApp('com.swaglabsmobileapp');
     await LoginScreen.waitForDisplayed();
     await LoginScreen.login('problem_user', 'secret_sauce');
     await ProductsScreen.isDisplayed(40_000);

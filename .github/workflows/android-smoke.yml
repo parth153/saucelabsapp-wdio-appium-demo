@@ -1,0 +1,70 @@
+name: Android Smoke Tests
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Enable KVM for hardware acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run smoke tests on emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          target: google_apis
+          arch: x86_64
+          profile: pixel_5
+          avd-name: test_avd
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -port 5554
+          disable-animations: true
+          script: |
+            echo "Emulator serial: $(adb devices)"
+
+            npx appium --port 4723 --log appium.log &
+            APPIUM_PID=$!
+
+            timeout 60 bash -c 'until curl -sf http://127.0.0.1:4723/status > /dev/null; do sleep 2; done'
+            echo "Appium is ready."
+
+            npx wdio run config/wdio.android.conf.ts --mochaOpts.grep '\[smoke\]'
+            TEST_EXIT=$?
+
+            kill $APPIUM_PID 2>/dev/null || true
+            exit $TEST_EXIT
+
+      - name: Upload Appium logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: appium-logs-smoke
+          path: appium.log
+          retention-days: 7

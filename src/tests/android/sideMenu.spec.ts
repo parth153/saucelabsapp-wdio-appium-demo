@@ -30,13 +30,14 @@ describe('TS-06: Side Menu / Navigation Drawer', () => {
   }
 
   beforeEach(async () => {
-    await driver.reloadSession();
+    await driver.terminateApp('com.swaglabsmobileapp');
+    await driver.activateApp('com.swaglabsmobileapp');
     await LoginScreen.waitForDisplayed();
     await LoginScreen.login('standard_user', 'secret_sauce');
     await ProductsScreen.isDisplayed(40_000);
   });
 
-  it('TC-051: menu opens with all 8 items and X close button', async () => {
+  it('[smoke] TC-051: menu opens with all 8 items and X close button', async () => {
     await SideMenuDrawer.open();
 
     await expect(SideMenuDrawer.closeButton).toBeDisplayed();

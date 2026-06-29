@@ -5,7 +5,8 @@ import { SoftAssert } from '../../helpers/softAssert';
 
 describe('TS-03: Product Detail', () => {
   beforeEach(async () => {
-    await driver.reloadSession();
+    await driver.terminateApp('com.swaglabsmobileapp');
+    await driver.activateApp('com.swaglabsmobileapp');
     await LoginScreen.waitForDisplayed();
     await LoginScreen.login('standard_user', 'secret_sauce');
     await ProductsScreen.isDisplayed(40_000);
@@ -29,7 +30,7 @@ describe('TS-03: Product Detail', () => {
     await expect(ProductDetailScreen.backButton).toBeDisplayed();
   });
 
-  it('TC-022: opens correct detail screen when product name is tapped', async () => {
+  it('[smoke] TC-022: opens correct detail screen when product name is tapped', async () => {
     await openDetailByName('Sauce Labs Bike Light');
     expect(await ProductDetailScreen.getName()).toContain('Sauce Labs Bike Light');
   });
